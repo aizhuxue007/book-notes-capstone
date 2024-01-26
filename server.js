@@ -26,11 +26,6 @@ app.set('view engine', 'ejs')
 
 app.use(express.static('public'))
 
-app.use((req, res, next) => {
-    console.log('in custom middleware')
-    next()
-})
-
 app.get('/', (req, res) => {
     const data = {
         books: books
