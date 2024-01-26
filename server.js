@@ -5,8 +5,6 @@ import pg from 'pg'
 const app = express()
 const PORT = 3000
 
-let bookList = await getBookImages()
-
 const pgClient = new pg.Client({
     user: 'postgres',
     password: 'jesus',
@@ -16,13 +14,17 @@ const pgClient = new pg.Client({
 })
 await pgClient.connect()
 
-async function getBookImages() {
-    const response = await axios.get('https://covers.openlibrary.org/b/isbn/9780718013462-M.jpg')
+let books = await getBooksFromDB()
 
-    return response.config
+async function getBooksFromDB() {
+   const res = await pgClient.query('select * from book_reviews')
+   console.log(res.rows)
+   return res.rows
 }
 
 app.set('view engine', 'ejs')
+
+app.use(express.static('public'))
 
 app.use((req, res, next) => {
     console.log('in custom middleware')
@@ -30,9 +32,8 @@ app.use((req, res, next) => {
 })
 
 app.get('/', (req, res) => {
-    console.log(bookList.url)
     const data = {
-        book: bookList.url,
+        books: books
     };
     res.render('index', data)
 })

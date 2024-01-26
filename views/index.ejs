@@ -1,3 +1,33 @@
-<h1>Hello Ejs</h1>
+<!DOCTYPE html>
+<html lang="en">
 
-<img src="<%= book %>" alt="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Reviews</title>
+    <link rel="stylesheet" href="/stylesheets/styles.css">
+</head>
+
+<body>
+
+    <h1>Zooey Book Reviews</h1>
+
+    <% books.map(book=> { %>
+        <article>
+            <img src="<%= book.img_url %>" alt="<%= book.title %>" loading="lazy">
+            <div class="book_description">
+                <h2 class="book__title">
+                    <%= book.title %>
+                </h2>
+                <p class="book__rating">
+                    <%= book.rating %> / 10
+                </p>
+                <p class="book__review">
+                    <%= book.review %>
+                </p>
+            </div>
+        </article>
+        <% }) %>
+</body>
+
+</html>
