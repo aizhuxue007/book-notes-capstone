@@ -5,3 +5,17 @@ article {
     gap: 1.5em
 }
 
+.btn {
+    display: block;
+    width: fit-content;
+}
+
+.btn--link {
+    padding: 1em;
+    border: 1px solid grey;
+}
+
+.btn--add {
+    margin-top: 3em;
+}
+

@@ -33,6 +33,10 @@ app.get('/', (req, res) => {
     res.render('index', data)
 })
 
+app.get('/add', (req, res) => {
+    res.render('new')
+})
+
 app.listen(PORT, () => {
     console.log(`Listening at port ${PORT}`)
 })
