@@ -3,3 +3,7 @@ form {
     flex-direction: column;
     gap: 1em;
 }
+
+input {
+    width: 30%;
+}
