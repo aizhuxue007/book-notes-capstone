@@ -73,12 +73,14 @@ app.post('/add', async (req, res) => {
 app.patch('/edit', (req, res) => {
     const bookId = req.body.bookId
     console.log(bookId)
+    // patch only changed items in postgres
     res.send(`Handling PATCH request for book ID: ${bookId}`)
 })
 
 app.delete('/delete', (req, res) => {
     const bookId = req.body.bookId
     console.log(bookId)
+    // delete record from postgres
     res.send(`Handling PATCH request for book ID: ${bookId}`)
 })
 
