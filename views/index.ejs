@@ -25,13 +25,10 @@
                     <%= book.review %>
                 </p>
                 <div class="actions">
-                    <form class="action-form" action="/edit" method="post">
-                        <input type="hidden" name="_method" value="PATCH">
-                        <input type="hidden" name="bookId" value="<%= book.id %>">
+                    <form class="action-form" action="/edit/<%= book.id %>" method="get">
                         <button type="submit">Edit</button>
                     </form>
                     <form class="action-form" action="/delete" method="post">
-                        <input type="hidden" name="_method" value="DELETE">
                         <input type="hidden" name="bookId" value="<%= book.id %>">
                         <button type="submit">Delete</button>
                     </form>

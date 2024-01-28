@@ -2,7 +2,6 @@ import express from 'express'
 import axios from 'axios'
 import pg from 'pg'
 import bodyParser from 'body-parser'
-import methodOverride from 'method-override';
 
 const app = express()
 const PORT = 3000
@@ -14,23 +13,53 @@ const pgClient = new pg.Client({
     database: 'books',
     port: 5433
 })
-await pgClient.connect()
 
 async function getBooksFromDB() {
+   await pgClient.connect()
    const res = await pgClient.query('select * from book_reviews')
-   console.log(res.rows)
+   await pgClient.end()
    return res.rows
 }
 
 async function postBookToDB(book) {
     const query = `insert into book_reviews (title, rating, review, img_url) values ($1, $2, $3, $4)`
     try {
+        await pgClient.connect()
         await pgClient.query(query, [
             book.title, book.rating, book.review, book.img_url
         ])
         console.log('Inserted record successfully!')
     } catch (error) {
         console.error('Error inserting record:', error);
+    } finally {
+        await pgClient.end()
+    }
+}
+
+async function editBookFromDB(id) {
+    const query = `delete from book_reviews where id = $1`
+    try {
+        await pgClient.connect()
+        await pgClient.query(query, [id])
+        console.log('successfully deleted!')
+    } catch (error) {
+        console.error('Error deleting record:', error);
+    } finally {
+        await pg.Client.end()
+    }
+}
+
+async function deleteBookFromDB(id) {
+    console.log('in delete')
+    const query = `delete from book_reviews where id = $1`
+    try {
+        await pgClient.connect()
+        await pgClient.query(query, [id])
+        console.log('successfully deleted!')
+    } catch (error) {
+        console.error('Error deleting record:', error);
+    } finally {
+        await pgClient.end()
     }
 }
 
@@ -44,7 +73,6 @@ app.set('view engine', 'ejs')
 
 app.use(express.static('public'))
 app.use(bodyParser.urlencoded({ extended: false }))
-app.use(methodOverride('_method'))
 
 app.get('/', async (req, res) => {
     const books = await getBooksFromDB()
@@ -56,6 +84,14 @@ app.get('/', async (req, res) => {
 
 app.get('/add', (req, res) => {
     res.render('new')
+})
+
+app.get('/edit/:id', async (req, res) => {
+    console.log('in here')
+    const data = {
+        id: req.params.id
+    }
+    res.render('edit', data)
 })
 
 app.post('/add', async (req, res) => {
@@ -70,18 +106,15 @@ app.post('/add', async (req, res) => {
     res.redirect('/')
 })
 
-app.patch('/edit', (req, res) => {
-    const bookId = req.body.bookId
-    console.log(bookId)
-    // patch only changed items in postgres
-    res.send(`Handling PATCH request for book ID: ${bookId}`)
+app.post('/edit/:id', async (req, res) => {
+    console.log(req.body)
+    res.redirect('/')
 })
 
-app.delete('/delete', (req, res) => {
+app.post('/delete', async (req, res) => {
     const bookId = req.body.bookId
-    console.log(bookId)
-    // delete record from postgres
-    res.send(`Handling PATCH request for book ID: ${bookId}`)
+    await deleteBookFromDB(bookId)
+    res.redirect('/')
 })
 
 app.listen(PORT, () => {
