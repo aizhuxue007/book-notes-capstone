@@ -9,10 +9,9 @@
 </head>
 
 <body>
-
     <h1>Zooey Book Reviews</h1>
 
-    <% books.map(book=> { %>
+    <% books.forEach(book=> { %>
         <article>
             <img src="<%= book.img_url %>" alt="<%= book.title %>" loading="lazy">
             <div class="book_description">
@@ -26,13 +25,21 @@
                     <%= book.review %>
                 </p>
                 <div class="actions">
-                    <button>Edit</button>
-                    <button>Delete</button>
+                    <form class="action-form" action="/edit" method="post">
+                        <input type="hidden" name="_method" value="PATCH">
+                        <input type="hidden" name="bookId" value="<%= book.id %>">
+                        <button type="submit">Edit</button>
+                    </form>
+                    <form class="action-form" action="/delete" method="post">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="hidden" name="bookId" value="<%= book.id %>">
+                        <button type="submit">Delete</button>
+                    </form>
                 </div>
             </div>
         </article>
-    <% }) %>
-    <a href="/add" class="btn btn--add btn--link">Add Book</a>
+        <% }) %>
+            <a href="/add" class="btn btn--add btn--link">Add Book</a>
 </body>
 
 </html>
