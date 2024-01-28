@@ -2,6 +2,7 @@ import express from 'express'
 import axios from 'axios'
 import pg from 'pg'
 import bodyParser from 'body-parser'
+import methodOverride from 'method-override';
 
 const app = express()
 const PORT = 3000
@@ -43,6 +44,7 @@ app.set('view engine', 'ejs')
 
 app.use(express.static('public'))
 app.use(bodyParser.urlencoded({ extended: false }))
+app.use(methodOverride('_method'))
 
 app.get('/', async (req, res) => {
     const books = await getBooksFromDB()
@@ -66,6 +68,18 @@ app.post('/add', async (req, res) => {
     book.img_url = `https://covers.openlibrary.org/b/isbn/${book_isbn}-M.jpg`
     await postBookToDB(book)
     res.redirect('/')
+})
+
+app.patch('/edit', (req, res) => {
+    const bookId = req.body.bookId
+    console.log(bookId)
+    res.send(`Handling PATCH request for book ID: ${bookId}`)
+})
+
+app.delete('/delete', (req, res) => {
+    const bookId = req.body.bookId
+    console.log(bookId)
+    res.send(`Handling PATCH request for book ID: ${bookId}`)
 })
 
 app.listen(PORT, () => {
