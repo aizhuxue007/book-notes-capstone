@@ -13,18 +13,17 @@ const pgClient = new pg.Client({
     database: 'books',
     port: 5433
 })
+pgClient.connect()
+
 
 async function getBooksFromDB() {
-   await pgClient.connect()
    const res = await pgClient.query('select * from book_reviews')
-   await pgClient.end()
    return res.rows
 }
 
 async function postBookToDB(book) {
     const query = `insert into book_reviews (title, rating, review, img_url) values ($1, $2, $3, $4)`
     try {
-        await pgClient.connect()
         await pgClient.query(query, [
             book.title, book.rating, book.review, book.img_url
         ])
@@ -32,41 +31,39 @@ async function postBookToDB(book) {
     } catch (error) {
         console.error('Error inserting record:', error);
     } finally {
-        await pgClient.end()
     }
 }
 
-async function editBookFromDB(id) {
-    const query = `delete from book_reviews where id = $1`
+async function editBookFromDB(book) {
+    const query = `UPDATE book_reviews
+    SET title = $2,
+        rating = $3,
+        review = $4
+    WHERE id = $1`
     try {
-        await pgClient.connect()
-        await pgClient.query(query, [id])
-        console.log('successfully deleted!')
+        await pgClient.query(query, [book.id, book.title, book.rating, book.review])
+        console.log('successfully updated!')
     } catch (error) {
-        console.error('Error deleting record:', error);
+        console.error('Error updating record:', error);
     } finally {
-        await pg.Client.end()
     }
 }
 
 async function deleteBookFromDB(id) {
-    console.log('in delete')
     const query = `delete from book_reviews where id = $1`
     try {
-        await pgClient.connect()
         await pgClient.query(query, [id])
         console.log('successfully deleted!')
     } catch (error) {
         console.error('Error deleting record:', error);
     } finally {
-        await pgClient.end()
     }
 }
 
 async function getBookCover(title) {
     const url = `https://openlibrary.org/search.json?title=`
     const res = await axios.get(url + title +'&limit=1')
-    return res.data.docs[0].isbn[0]
+    return res.data.docs[0].isbn[1] 
 }
 
 app.set('view engine', 'ejs')
@@ -107,7 +104,14 @@ app.post('/add', async (req, res) => {
 })
 
 app.post('/edit/:id', async (req, res) => {
-    console.log(req.body)
+    const { id, title, rating, review } = req.body
+    const updatedBook = {
+        id: Number(id),
+        title: title,
+        rating: Number(rating),
+        review: review
+    }
+    await editBookFromDB(updatedBook)
     res.redirect('/')
 })
 

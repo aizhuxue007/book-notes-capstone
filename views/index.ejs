@@ -10,7 +10,8 @@
 
 <body>
     <h1>Zooey Book Reviews</h1>
-
+    <a href="/add" class="btn btn--add btn--link">Add Book</a>
+    <main>
     <% books.forEach(book=> { %>
         <article>
             <img src="<%= book.img_url %>" alt="<%= book.title %>" loading="lazy">
@@ -19,7 +20,7 @@
                     <%= book.title %>
                 </h2>
                 <p class="book__rating">
-                    <%= book.rating %> / 10
+                    Recommendation <%= book.rating %> / 10
                 </p>
                 <p class="book__review">
                     <%= book.review %>
@@ -36,7 +37,8 @@
             </div>
         </article>
         <% }) %>
-            <a href="/add" class="btn btn--add btn--link">Add Book</a>
+    </main>
+            
 </body>
 
 </html>
